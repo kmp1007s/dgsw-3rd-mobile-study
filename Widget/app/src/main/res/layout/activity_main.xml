@@ -6,92 +6,115 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:orientation="vertical"
-    android:gravity="center_horizontal">
+    android:gravity="center">
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
         >
 
-        <ImageView
-            android:id="@+id/imageViewTitle"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/ic_build_24px"
-            android:layout_marginRight="10dp"/>
+            android:orientation="horizontal"
+            android:gravity="center"
+            >
+
+            <ImageView
+                android:id="@+id/imageViewTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/ic_build_24px"
+                android:layout_marginRight="15dp"
+                />
+
+            <TextView
+                android:id="@+id/textViewTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="회원 가입"></TextView>
+
+
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/editTextName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="이름"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="30dp"
+            ></EditText>
+        <EditText
+            android:id="@+id/editTextPhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="전화번호"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            ></EditText>
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="25dp">
+
+            <RadioButton
+                android:id="@+id/radioButtonAdult"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="성인반" />
+
+            <RadioButton
+                android:id="@+id/radioButtonStudent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="학생반" />
+        </RadioGroup>
 
         <TextView
-            android:id="@+id/textViewTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="회원 가입"></TextView>
+            android:text="약관 동의"
+            android:layout_marginTop="45dp"></TextView>
 
+        <CheckBox
+            android:id="@+id/checkBoxTerms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="이용 약관(필수)"
+            android:layout_marginTop="30dp"/>
+
+        <CheckBox
+            android:id="@+id/checkBoxMarketing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="마케팅 활용 동의(선택)"
+            android:layout_marginTop="20dp"/>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="4"
+            android:layout_marginTop="25dp"/>
+
+        <Button
+            android:id="@+id/buttonApply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="신청"
+            android:visibility="invisible"
+            />
 
     </LinearLayout>
-
-    <EditText
-        android:id="@+id/editTextName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        ></EditText>
-    <EditText
-        android:id="@+id/editTextPhone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        ></EditText>
-
-    <RadioGroup
-        android:id="@+id/radioGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <RadioButton
-            android:id="@+id/radioButtonAdult"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="성인반" />
-
-        <RadioButton
-            android:id="@+id/radioButtonStudent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="학생반" />
-    </RadioGroup>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="약관 동의"></TextView>
-
-    <CheckBox
-        android:id="@+id/checkBoxTerms"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="이용 약관(필수)" />
-
-    <CheckBox
-        android:id="@+id/checkBoxMarketing"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="마케팅 활용 동의(선택)" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="신청"
-        android:visibility="invisible"/>
-
 
 </LinearLayout>
