@@ -1,7 +1,10 @@
 package com.codesample.widget;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -13,11 +16,27 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 import com.codesample.widget.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity implements TextWatcher, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
     private ActivityMainBinding binding;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 1) {
+            if(resultCode == Activity.RESULT_OK) {
+                if(data!=null) {
+                    String message = data.getStringExtra("message");
+                    if(message != null) Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(this, "Canceld.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher, View
         binding.radioButtonAdult.setOnClickListener(this);
         binding.radioButtonStudent.setOnClickListener(this);
         binding.checkBoxTerms.setOnCheckedChangeListener(this);
+        binding.buttonApply.setOnClickListener(this);
     }
 
     @Override
@@ -53,7 +73,19 @@ public class MainActivity extends AppCompatActivity implements TextWatcher, View
 
     @Override
     public void onClick(View v) {
-        updateProgress();
+        if(v.getId() == R.id.buttonApply) {
+            Intent intent = new Intent(this, ConfirmActivity.class);
+            intent.putExtra("name", binding.editTextName.getText().toString());
+            intent.putExtra("phone", binding.editTextPhone.getText().toString());
+
+            String userClass = "Adult";
+            if(binding.radioButtonStudent.isChecked()) userClass="Student";
+            intent.putExtra("class", userClass);
+            intent.putExtra("marketing", binding.checkBoxMarketing.isChecked());
+
+//            startActivity(intent);
+            startActivityForResult(intent, 1);
+        } else updateProgress();
     }
 
     @Override
