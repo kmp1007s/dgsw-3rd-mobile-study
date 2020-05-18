@@ -60,4 +60,10 @@ public class FoodRecordOpenHelper extends SQLiteOpenHelper {
         c.close();
         return result;
     }
+
+    public int delete(int id) {
+        SQLiteDatabase db = getWritableDatabase();
+        String[] args = {String.valueOf(id)};
+        return db.delete("foods", "id=?", args);
+    }
 }

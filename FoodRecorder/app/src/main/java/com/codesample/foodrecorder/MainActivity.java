@@ -3,6 +3,7 @@ package com.codesample.foodrecorder;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
 
         displayRecord(lastFood, lastTime);
         binding.buttonRecord.setOnClickListener(onSave);
+        binding.buttonShowAll.setOnClickListener(v -> {
+            startActivity(new Intent(this, RecordActivity.class));
+        });
     }
 
     private void displayRecord(String lastFood, String lastTime) {
