@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.codesample.foodrecorder.data.FoodRecord;
+import com.codesample.foodrecorder.data.FoodRecordDatabase;
 import com.codesample.foodrecorder.data.FoodRecordOpenHelper;
 import com.codesample.foodrecorder.databinding.ActivityMainBinding;
 
@@ -17,12 +18,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private SharedPreferences preferences;
-    private FoodRecordOpenHelper helper;
+//    private FoodRecordOpenHelper helper;
+    private FoodRecordDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,9 +33,12 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        helper = new FoodRecordOpenHelper(this, "db", null, 1);
-        ArrayList<FoodRecord> list = helper.getRecords();
-        for(FoodRecord r: list) Log.i("Main", r.getFood() + r.getTime());
+//        helper = new FoodRecordOpenHelper(this, "db", null, 1);
+//        ArrayList<FoodRecord> list = helper.getRecords();
+//
+//        for(FoodRecord r: list) Log.i("Main", r.getFood() + r.getTime());
+        db = FoodRecordDatabase.getInstance(getApplicationContext());
+        getList();
 
         preferences = getSharedPreferences("food", Context.MODE_PRIVATE);
         String lastFood = preferences.getString("food", null);
@@ -80,9 +86,22 @@ public class MainActivity extends AppCompatActivity {
             editor.putString("time", time);
             editor.apply(); // 비동기로 수행
 
-            helper.addRecord(new FoodRecord(food, time));
-
+//            helper.addRecord(new FoodRecord(food, time));
+            save(new FoodRecord(food, time));
             displayRecord(food, time);
         }
     };
+
+    private void save(FoodRecord record) {
+        new Thread(() -> db.foodRecordDAO().addRecord(record)).start();
+    }
+
+    private void getList() {
+        new Thread(() -> {
+            List<FoodRecord> result = db.foodRecordDAO().getRecords();
+            for(FoodRecord e:result) {
+                Log.i("Main", e.time + e.food);
+            }
+        }).start();
+    }
 }

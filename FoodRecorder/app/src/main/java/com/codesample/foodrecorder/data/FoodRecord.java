@@ -1,9 +1,16 @@
 package com.codesample.foodrecorder.data;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "food")
 public class FoodRecord {
-    private int id;
-    private String food;
-    private String time;
+    @PrimaryKey (autoGenerate = true)
+    public int id;
+    @ColumnInfo(name = "food")
+    public String food;
+    public String time;
 
     public FoodRecord() {}
     public FoodRecord(String food, String time) {
