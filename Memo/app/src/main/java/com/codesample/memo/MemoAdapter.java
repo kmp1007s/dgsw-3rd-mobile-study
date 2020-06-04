@@ -11,7 +11,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoViewHolder> {
+
+    public interface OnListItemClickListener {
+        void onListItemClick(Memo memo);
+        void onListItemLongClick(Memo memo);
+    }
+
     private List<Memo> data;
+    private OnListItemClickListener listener;
+
+    public MemoAdapter(OnListItemClickListener listener) {
+        this.listener = listener;
+    }
 
     public void updateData(List<Memo> data) {
         this.data=data;
@@ -31,6 +42,15 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoViewHolder
 
         holder.time.setText(m.time);
         holder.title.setText(m.title);
+
+        holder.itemView.setOnClickListener(v -> {
+            listener.onListItemClick(m);
+        });
+
+        holder.itemView.setOnLongClickListener(v -> {
+            listener.onListItemLongClick(m);
+            return true;
+        });
     }
 
     @Override

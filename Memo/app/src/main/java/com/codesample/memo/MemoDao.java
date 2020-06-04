@@ -25,5 +25,5 @@ public interface MemoDao {
     public int saveMemo(Memo memo);
 
     @Delete
-    public int delete(Memo memo);
+    public int deleteMemo(Memo memo);
 }
