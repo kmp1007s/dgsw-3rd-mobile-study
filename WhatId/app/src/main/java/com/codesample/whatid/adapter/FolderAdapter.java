@@ -3,6 +3,7 @@ package com.codesample.whatid.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,12 +19,15 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.FolderView
     public interface OnListItemClickListener {
         void onListItemClick(Folder folder);
         void onListItemLongClick(Folder folder);
+        void onEditClick(Folder folder);
     }
 
     private List<Folder> data;
     private OnListItemClickListener listener;
 
-    public FolderAdapter(OnListItemClickListener listener) { this.listener = listener; }
+    public FolderAdapter(OnListItemClickListener listener) {
+        this.listener = listener;
+    }
 
     public void updateData(List<Folder> data) {
         this.data = data;
@@ -51,6 +55,10 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.FolderView
             listener.onListItemLongClick(f);
             return true;
         });
+
+        holder.edit.setOnClickListener(v -> {
+            listener.onEditClick(f);
+        });
     }
 
     @Override
@@ -60,9 +68,12 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.FolderView
 
     class FolderViewHolder extends RecyclerView.ViewHolder {
         TextView name;
+        ImageView edit;
+
         public FolderViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.textViewName);
+            edit = itemView.findViewById(R.id.buttonEdit);
         }
     }
 }

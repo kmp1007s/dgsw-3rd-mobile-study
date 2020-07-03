@@ -12,7 +12,7 @@ import java.util.List;
 @Dao
 public interface AccountDao {
     @Insert
-    public void addAccount(Account account); // 계정 추가
+    public long addAccount(Account account); // 계정 추가
 
     @Query("select * from Account where id=:id")
     public Account getAccount(int id); // id로 계정 조회

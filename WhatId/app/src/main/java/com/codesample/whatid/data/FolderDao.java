@@ -12,14 +12,14 @@ import java.util.List;
 @Dao
 public interface FolderDao {
     @Insert
-    public void addFolder(Folder folder); // 폴더 추가
+    public long addFolder(Folder folder); // 폴더 추가
 
     @Query("select * from Folder")
     @TypeConverter
     public List<Folder> getFolders(); // 폴더 전체 조회
 
     @Query("select * from Account where folderId=:folderId")
-    public Folder getFolderItems(int folderId); // 폴더 별 계정 조회
+    public List<Account> getFolderItems(int folderId); // 폴더 별 계정 조회
 
     @Update
     public int saveFolder(Folder folder); // 폴더명 업데이트

@@ -16,6 +16,8 @@ public class Account {
     public String userId;
     public String password;
     public String memo;
+    public String created;
+    public String updated;
 
     public Account() {}
 

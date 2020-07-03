@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">FCMTest</string>
+    <string name="default_notification_channel_id">lecture.fcmtest.kim_sh</string>
+</resources>

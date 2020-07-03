@@ -67,13 +67,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="11"
+        android:gravity="center_horizontal"
         android:hint="PASSWORD"
         android:inputType="textPassword"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/textViewMemo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewPW"
-        app:layout_constraintBottom_toTopOf="@+id/textViewMemo"
-        android:gravity="center_horizontal"/>
+        android:drawableRight="@drawable/ic_eye"
+        android:drawablePadding="4dp"/>
 
     <TextView
         android:id="@+id/textViewMemo"
@@ -96,7 +100,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewMemo"
         app:layout_constraintBottom_toTopOf="@id/buttonComplete"
-        android:gravity="center"
+        android:gravity="center|bottom"
         android:lines="4"/>
 
     <Button
@@ -132,7 +136,7 @@
         app:srcCompat="@drawable/ic_star" />
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/buttonFolder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -140,5 +144,14 @@
         app:layout_constraintTop_toBottomOf="@+id/buttonStar"
         app:srcCompat="@drawable/ic_folder" />
 
+<!--    <ImageView-->
+<!--        android:id="@+id/imageView3"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginEnd="8dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/editTextPW"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/editTextPW"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/editTextPW"-->
+<!--        app:srcCompat="@drawable/ic_eye" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
