@@ -7,7 +7,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -41,6 +45,14 @@ public class InnerFolderActivity extends AppCompatActivity implements InnerFolde
         db = AppDatabase.getInstance(getApplicationContext());
         adapter = new InnerFolderAdpater(this);
 
+//        ArrayAdapter spinnerAapter = ArrayAdapter.createFromResource(
+//                this,
+//                R.array.filter,
+//                R.layout.support_simple_spinner_dropdown_item
+//        );
+//        spinnerAapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+//        binding.spinnerFilter.setAdapter(spinnerAapter);
+
         binding.recyclerView.setAdapter(adapter);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -57,6 +69,28 @@ public class InnerFolderActivity extends AppCompatActivity implements InnerFolde
                 new LoadByBookmarkTask().execute();
             else
                 new LoadTask().execute();
+        });
+
+        binding.editTextSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String str = s.toString();
+                new SearchTask().execute(str);
+            }
+        });
+
+        binding.buttonSort.setOnClickListener(v -> {
+
         });
     }
 
@@ -202,6 +236,45 @@ public class InnerFolderActivity extends AppCompatActivity implements InnerFolde
         @Override
         protected List<Bookmark> doInBackground(Void... voids) {
             return db.getBookmarkDAO().getBookmarks();
+        }
+    }
+
+    class SearchTask extends AsyncTask<String, Void, List<Account>> {
+        @Override
+        protected void onPostExecute(List<Account> accounts) {
+            super.onPostExecute(accounts);
+            adapter.updateData(accounts);
+        }
+
+        @Override
+        protected List<Account> doInBackground(String... strings) {
+            String query = strings[0];
+
+            List<Account> searchResult = new ArrayList<>();
+            List<Account> accountsByFolder = db.getAccountDAO().getAccountsByFolder(folderId);
+            List<Account> accountsForSearch;
+
+            if(displayBookmark) {
+                new LoadBookmarkTask().execute();
+
+                accountsForSearch = new ArrayList<>();
+
+                for(Account a: accountsByFolder) {
+                    Bookmark exist = db.getBookmarkDAO().getBookmarkByAccount(a.id);
+
+                    if(exist != null)
+                        accountsForSearch.add(a);
+                }
+            } else {
+                accountsForSearch = accountsByFolder;
+            }
+
+            for(Account a: accountsForSearch) {
+                if(a.url.contains(query) || a.memo.contains(query))
+                    searchResult.add(a);
+            }
+
+            return searchResult;
         }
     }
 }
