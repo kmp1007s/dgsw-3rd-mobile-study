@@ -1,159 +1,97 @@
 package com.codesample.whatid;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.widget.EditText;
+import android.widget.Toast;
 
-import com.codesample.whatid.adapter.FolderAdapter;
 import com.codesample.whatid.data.AppDatabase;
-import com.codesample.whatid.data.Folder;
+import com.codesample.whatid.data.User;
 import com.codesample.whatid.databinding.ActivityMainBinding;
 
-import java.util.List;
-
-public class MainActivity extends AppCompatActivity implements FolderAdapter.OnListItemClickListener{
+public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private AppDatabase db;
-    private FolderAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         db = AppDatabase.getInstance(getApplicationContext());
-        adapter = new FolderAdapter(this);
 
-        binding.recyclerView.setAdapter(adapter);
-        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        binding.buttonLogin.setOnClickListener(v -> {
+            String userId = binding.editTextUserId.getText().toString();
+            String password = binding.editTextPassword.getText().toString();
 
-        binding.floatingActionButton.setOnClickListener(v -> {
-            final EditText name = new EditText(this);
+            User user = new User(userId, password);
 
-            new AlertDialog.Builder(this)
-                    .setTitle("입력")
-                    .setMessage("폴더 이름을 입력해주세요")
-                    .setView(name)
-                    .setPositiveButton("완료", (d, w) -> {
-                        String folderName = name.getText().toString();
+            new LoginTask().execute(user);
+        });
 
-                        Folder folder = new Folder(folderName);
-                        if(folder != null) new AddTask().execute(folder);
-                    })
-                    .setNegativeButton("취소", (d, w) -> {
+        binding.buttonRegister.setOnClickListener(v -> {
+            String userId = binding.editTextUserId.getText().toString();
+            String password = binding.editTextPassword.getText().toString();
 
-                    })
-                    .create()
-                    .show();
+            User user = new User(userId, password);
+
+            new RegisterTask().execute(user);
+            new LoginTask().execute(user);
         });
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        new LoadTask().execute();
-    }
-
-    @Override
-    public void onListItemClick(Folder folder) {
-           Intent intent = new Intent(this, InnerFolderActivity.class);
-           intent.putExtra("folderId", folder.id);
-           startActivity(intent);
-    }
-
-    @Override
-    public void onListItemLongClick(Folder folder) {
-        new AlertDialog
-                .Builder(this)
-                .setMessage("삭제하시겠습니까?")
-                .setPositiveButton("예", (d, w) -> {
-                    new DeleteTask().execute(folder);
-                })
-                .setNegativeButton("아니오", (d, w) -> {})
-                .create()
-                .show();
-    }
-
-    @Override
-    public void onEditClick(Folder folder) {
-        final EditText name = new EditText(this);
-
-        new AlertDialog.Builder(this)
-                .setTitle("수정")
-                .setMessage("수정할 이름을 입력해주세요")
-                .setView(name)
-                .setPositiveButton("완료", (d, w) -> {
-                    String folderName = name.getText().toString();
-                    folder.name = folderName;
-
-                    new SaveTask().execute(folder);
-                })
-                .setNegativeButton("취소", (d, w) -> {
-
-                })
-                .create()
-                .show();
-    }
-
-    class LoadTask extends AsyncTask<Void, Void, List<Folder>> {
+    class LoginTask extends AsyncTask<User, Void, User> {
         @Override
-        protected void onPostExecute(List<Folder> folders) {
-            super.onPostExecute(folders);
-            adapter.updateData(folders);
+        protected void onPostExecute(User aUser) {
+            super.onPostExecute(aUser);
+
+            if(aUser == null) {
+                Toast.makeText(getApplicationContext(),"인증에 실패했습니다",Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(),"로그인 성공",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, FolderActivity.class);
+                intent.putExtra("userId", aUser.userId);
+                startActivity(intent);
+            }
         }
 
         @Override
-        protected List<Folder> doInBackground(Void... voids) {
-            return db.getFolderDAO().getFolders();
+        protected User doInBackground(User... users) {
+            User user = db.getUserDAO().getUserByUserId(users[0].userId);
+
+            if(user != null && users[0].password.equals(user.password))
+                return users[0];
+
+            return null;
         }
     }
 
-    class AddTask extends AsyncTask<Folder, Void, List<Folder>> {
+    class RegisterTask extends AsyncTask<User, Void, Boolean> {
         @Override
-        protected void onPostExecute(List<Folder> folders) {
-            super.onPostExecute(folders);
-            adapter.updateData(folders);
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+
+            if(aBoolean)
+                Toast.makeText(getApplicationContext(),"회원가입에 성공했습니다",Toast.LENGTH_LONG).show();
+
+            else
+                Toast.makeText(getApplicationContext(),"이미 아이디가 존재합니다",Toast.LENGTH_LONG).show();
         }
 
         @Override
-        protected List<Folder> doInBackground(Folder... folders) {
-            db.getFolderDAO().addFolder(folders[0]);
-            return db.getFolderDAO().getFolders();
-        }
-    }
+        protected Boolean doInBackground(User... users) {
+            User exist = db.getUserDAO().getUserByUserId(users[0].userId);
 
-    class SaveTask extends AsyncTask<Folder, Void, List<Folder>> {
-        @Override
-        protected void onPostExecute(List<Folder> folders) {
-            super.onPostExecute(folders);
-            adapter.updateData(folders);
-        }
+            if(exist != null)
+                return false;
 
-        @Override
-        protected List<Folder> doInBackground(Folder... folders) {
-            db.getFolderDAO().saveFolder(folders[0]);
-            return db.getFolderDAO().getFolders();
-        }
-    }
-
-    class DeleteTask extends AsyncTask<Folder, Void, List<Folder>> {
-        @Override
-        protected void onPostExecute(List<Folder> folders) {
-            super.onPostExecute(folders);
-            adapter.updateData(folders);
-        }
-
-        @Override
-        protected List<Folder> doInBackground(Folder... folders) {
-            db.getFolderDAO().deleteFolder(folders[0]);
-            return db.getFolderDAO().getFolders();
+            db.getUserDAO().addUser(users[0]);
+            return true;
         }
     }
 }

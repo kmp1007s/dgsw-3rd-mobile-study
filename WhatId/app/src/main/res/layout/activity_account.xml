@@ -12,6 +12,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="URL"
+        android:fontFamily="sans-serif"
+        android:textFontWeight="600"
         app:layout_constraintBottom_toTopOf="@+id/editTextURL"
         app:layout_constraintStart_toStartOf="@+id/editTextURL"
         app:layout_constraintTop_toTopOf="parent" />
@@ -35,6 +37,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="ID"
+        android:fontFamily="sans-serif"
+        android:textFontWeight="600"
         app:layout_constraintBottom_toTopOf="@+id/editTextID"
         app:layout_constraintStart_toStartOf="@+id/editTextID"
         app:layout_constraintTop_toBottomOf="@+id/editTextURL" />
@@ -58,6 +62,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="PW"
+        android:fontFamily="sans-serif"
+        android:textFontWeight="600"
         app:layout_constraintStart_toStartOf="@+id/editTextPW"
         app:layout_constraintTop_toBottomOf="@+id/editTextID"
         app:layout_constraintBottom_toTopOf="@+id/editTextPW"/>
@@ -85,6 +91,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="MEMO"
+        android:fontFamily="sans-serif"
+        android:textFontWeight="600"
         app:layout_constraintStart_toStartOf="@+id/editTextMemo"
         app:layout_constraintTop_toBottomOf="@+id/editTextPW"
         app:layout_constraintBottom_toTopOf="@+id/editTextMemo"/>
@@ -109,6 +117,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="완료"
+        android:backgroundTint="@color/colorGray"
+        android:textColor="@color/colorBlack"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.35"
@@ -120,6 +130,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="취소"
+        android:backgroundTint="@color/colorGray"
+        android:textColor="@color/colorBlack"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.65"

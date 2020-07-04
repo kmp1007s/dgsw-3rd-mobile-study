@@ -14,12 +14,13 @@ public interface FolderDao {
     @Insert
     public long addFolder(Folder folder); // 폴더 추가
 
-    @Query("select * from Folder")
+    @Query("select * from Folder ORDER BY name ASC")
     @TypeConverter
     public List<Folder> getFolders(); // 폴더 전체 조회
 
-    @Query("select * from Account where folderId=:folderId")
-    public List<Account> getFolderItems(int folderId); // 폴더 별 계정 조회
+    @Query("select * from Folder where userId=:userId")
+    @TypeConverter
+    public List<Folder> getFoldersByUser(String userId);
 
     @Update
     public int saveFolder(Folder folder); // 폴더명 업데이트

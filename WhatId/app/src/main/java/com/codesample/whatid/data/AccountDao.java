@@ -17,12 +17,25 @@ public interface AccountDao {
     @Query("select * from Account where id=:id")
     public Account getAccount(int id); // id로 계정 조회
 
-    @Query("select * from Account")
+    @Query("select * from Account ORDER BY created ASC")
     @TypeConverter
     public List<Account> getAccounts(); // 계정 전체 조회
 
-    @Query("select * from Account where folderId=:folderId")
+    @Query("select * from Account where folderId=:folderId ORDER BY created ASC")
+    @TypeConverter
     public List<Account> getAccountsByFolder(int folderId); // 폴더별로 계정 조회
+
+    @Query("select * from Account where folderId=:folderId ORDER BY created DESC")
+    @TypeConverter
+    public List<Account> getAccountsByFolderDesc(int folderId); // 폴더별로 계정 조회
+
+    @Query("select * from Account where folderId=:folderId ORDER BY url ASC")
+    @TypeConverter
+    public List<Account> getAccountsByFolderOrderUrl(int folderId);
+
+    @Query("select * from Account where folderId=:folderId ORDER BY updated DESC")
+    @TypeConverter
+    public List<Account> getAccountsByFolderOrderUpdated(int folderId);
 
     @Update
     public int saveAccount(Account account); // 계정 업데이트

@@ -9,10 +9,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
+import android.view.Menu;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.codesample.whatid.adapter.InnerFolderAdpater;
@@ -31,27 +33,22 @@ public class InnerFolderActivity extends AppCompatActivity implements InnerFolde
 
     private InnerFolderAdpater adapter;
     private int folderId = -1;
+    private String userId;
 
     private boolean displayBookmark = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         binding = ActivityInnerFolderBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         folderId = getIntent().getIntExtra("folderId", -1);
+        userId = getIntent().getStringExtra("userId");
 
         db = AppDatabase.getInstance(getApplicationContext());
         adapter = new InnerFolderAdpater(this);
-
-//        ArrayAdapter spinnerAapter = ArrayAdapter.createFromResource(
-//                this,
-//                R.array.filter,
-//                R.layout.support_simple_spinner_dropdown_item
-//        );
-//        spinnerAapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-//        binding.spinnerFilter.setAdapter(spinnerAapter);
 
         binding.recyclerView.setAdapter(adapter);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -59,6 +56,7 @@ public class InnerFolderActivity extends AppCompatActivity implements InnerFolde
         binding.floatingActionButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, AccountActivity.class);
             intent.putExtra("folderId", folderId);
+            intent.putExtra("userId", userId);
             startActivity(intent);
         });
 
@@ -90,7 +88,18 @@ public class InnerFolderActivity extends AppCompatActivity implements InnerFolde
         });
 
         binding.buttonSort.setOnClickListener(v -> {
+            PopupMenu popup = new PopupMenu(this, binding.buttonSort);
 
+            popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
+
+            Menu menu = popup.getMenu();
+
+            popup.setOnMenuItemClickListener(item -> {
+                new FilterTask().execute(item.getTitle().toString());
+                return true;
+            });
+
+            popup.show();
         });
     }
 
@@ -105,6 +114,7 @@ public class InnerFolderActivity extends AppCompatActivity implements InnerFolde
         Intent intent = new Intent(this, AccountActivity.class);
         intent.putExtra("folderId", folderId);
         intent.putExtra("accountId", account.id);
+        intent.putExtra("userId", userId);
         startActivity(intent);
     }
 
@@ -275,6 +285,58 @@ public class InnerFolderActivity extends AppCompatActivity implements InnerFolde
             }
 
             return searchResult;
+        }
+    }
+
+    class FilterTask extends AsyncTask<String, Void, List<Account>> {
+        @Override
+        protected void onPostExecute(List<Account> accounts) {
+            super.onPostExecute(accounts);
+            adapter.updateData(accounts);
+        }
+
+        @Override
+        protected List<Account> doInBackground(String... strings) {
+            String selected = strings[0];
+            List<Account> accounts;
+
+            switch(selected) {
+                case "내림차순(생성일)":
+                    accounts = db.getAccountDAO().getAccountsByFolderDesc(folderId);
+                    break;
+
+                case "최근 수정 순서대로":
+                    accounts = db.getAccountDAO().getAccountsByFolderOrderUpdated(folderId);
+                    break;
+
+                case "URL 순서대로":
+                    accounts = db.getAccountDAO().getAccountsByFolderOrderUrl(folderId);
+                    break;
+
+                default:
+                    accounts = db.getAccountDAO().getAccountsByFolder(folderId);
+            }
+
+            if(!displayBookmark)
+                return accounts;
+
+            new LoadBookmarkTask().execute();
+
+            List<Integer> accountIds = new ArrayList<>();
+            List<Integer> accountsBookmarked = adapter.getAccountsBookmarked();
+
+            List<Account> toShow = new ArrayList<>();
+
+            for(Account a: accounts) {
+                accountIds.add(a.id);
+            }
+
+            for(int i = 0; i < accountIds.size(); i++) {
+                if(accountsBookmarked.contains(accountIds.get(i)))
+                    toShow.add(accounts.get(i));
+            }
+
+            return toShow;
         }
     }
 }

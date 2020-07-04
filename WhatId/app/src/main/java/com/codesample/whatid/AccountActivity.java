@@ -10,6 +10,8 @@ import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -19,7 +21,7 @@ import com.codesample.whatid.data.Bookmark;
 import com.codesample.whatid.data.Folder;
 import com.codesample.whatid.databinding.ActivityAccountBinding;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,21 +44,25 @@ public class AccountActivity extends AppCompatActivity {
     private ActivityAccountBinding binding;
     private AppDatabase db;
 
-    private int accountId = -1;
+    private int accountId;
     private int selectedFolderId;
 
     private boolean withBookmark = false;
     private boolean pwVisible = false;
 
+    private String userId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         binding = ActivityAccountBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         Intent intent = getIntent();
         accountId = intent.getIntExtra("accountId", -1); // 조회할 계정의 기본키
         selectedFolderId = intent.getIntExtra("folderId", -1);
+        userId = intent.getStringExtra("userId");
 
         db = AppDatabase.getInstance(getApplicationContext());
 
@@ -167,7 +173,7 @@ public class AccountActivity extends AppCompatActivity {
 
         @Override
         protected List<Folder> doInBackground(Void... voids) {
-            return db.getFolderDAO().getFolders();
+            return db.getFolderDAO().getFoldersByUser(userId);
         }
     }
 
@@ -210,7 +216,7 @@ public class AccountActivity extends AppCompatActivity {
             String memo = changeable.memo;
 
             Account a = new Account(selectedFolderId, url, userId, password, memo);
-            String now = LocalDate.now().toString();
+            String now = LocalDateTime.now().toString();
             a.created = now;
             a.updated = now;
 
@@ -240,11 +246,15 @@ public class AccountActivity extends AppCompatActivity {
             String userId = changeable.userId;
             String password = changeable.password;
             String memo = changeable.memo;
-            String now = LocalDate.now().toString();
+            String now = LocalDateTime.now().toString();
 
-            Account a = new Account(selectedFolderId, url, userId, password, memo);
+            Account a = db.getAccountDAO().getAccount(accountId);
+            a.folderId = selectedFolderId;
+            a.url = url;
+            a.userId = userId;
+            a.password = password;
+            a.memo = memo;
             a.updated = now;
-            a.id = accountId;
 
             db.getAccountDAO().saveAccount(a);
 

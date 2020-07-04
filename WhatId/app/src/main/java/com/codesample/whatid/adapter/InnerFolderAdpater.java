@@ -11,9 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.codesample.whatid.R;
 import com.codesample.whatid.data.Account;
-import com.codesample.whatid.data.Bookmark;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class InnerFolderAdpater extends RecyclerView.Adapter<InnerFolderAdpater.ViewHolder> {
@@ -31,6 +29,10 @@ public class InnerFolderAdpater extends RecyclerView.Adapter<InnerFolderAdpater.
 
     public InnerFolderAdpater(OnListItemClickListener listener) {
         this.listener = listener;
+    }
+
+    public List<Integer> getAccountsBookmarked() {
+        return this.accountsBookmarked;
     }
 
     public void updateData(List<Account> data) {
